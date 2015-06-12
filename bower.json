@@ -1,0 +1,23 @@
+{
+  "name": "sy-tools",
+  "version": "0.0.1",
+  "homepage": "https://github.com/merlosy/sy-tools",
+  "authors": [
+    "merlosy"
+  ],
+  "description": "AngularJS set of modules for general purpose",
+  "main": "dist/angular-sy-tools.js",
+  "keywords": [
+    "angular",
+    "tools",
+    "toolbox"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
