@@ -1,0 +1,96 @@
+<!doctype html>
+<html class="no-js" ng-app="sy-tools-demo">
+  <head>
+    <meta charset="utf-8">
+    <title>Sy-Tools Demo</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width">
+    <link rel="shortcut icon" href="/favicon.ico">
+    <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+    <!-- build:css(.) styles/vendor.css -->
+    <!-- bower:css -->
+    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css" />
+    <!-- endbower -->
+    <!-- endbuild -->
+
+    
+    <!-- build:css(.tmp) styles/app.css -->
+    <link rel="stylesheet" href="app/styles/tools.css">
+    <link rel="stylesheet" href="demo/app.css">
+    <!-- endbuild -->
+  </head>
+  <body ng-controller="AppCtrl">
+    <!--[if lt IE 10]>
+      <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+    <![endif]-->
+
+    <div class="container">
+
+    <nav class="navbar navbar-default">
+      <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" ui-sref="home">Sy-Tools Demo</a>
+          </div>
+
+          <!-- Collect the nav links, forms, and other content for toggling -->
+          <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+              <li ui-sref-active="active"><a ui-sref="feedback">Feedback</a></li>
+              <li ui-sref-active="active"><a ui-sref="device">Device</a></li>
+              <li ui-sref-active="active"><a ui-sref="password">Password</a></li>
+              <li ui-sref-active="active"><a ui-sref="railway">Railway</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+              <li><a href="#">About</a></li>
+            </ul>
+          </div><!-- /.navbar-collapse -->
+        </div><!-- /.container-fluid -->
+      </nav>
+
+      
+      <div ui-view>
+      </div>
+
+      <div class="footer">
+        <p><span class="glyphicon glyphicon-heart"></span> from Merlosy</p>
+      </div>
+
+    </div>
+
+
+    <!-- build:js(.) scripts/vendor.js -->
+    <!-- bower:js -->
+    <script src="bower_components/jquery/dist/jquery.js"></script>
+    <script src="bower_components/angular/angular.js"></script>
+    <script src="bower_components/angular-animate/angular-animate.js"></script>
+    <script src="bower_components/angular-aria/angular-aria.js"></script>
+    <script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
+    <script src="bower_components/angular-ui-router/release/angular-ui-router.js"></script>
+    <script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
+    <!-- endbower -->
+    <!-- endbuild -->
+
+
+    <!-- build:js({app,.tmp}) scripts/app.js -->
+    <script src="demo/app.js"></script>
+    <script src="demo/feedback-demo.js"></script>
+    <script src="demo/device-demo.js"></script>
+    <script src="demo/railway-demo.js"></script>
+    <script src="demo/passwordStrength-demo.js"></script>
+    <script src="app/birthdate.js"></script>
+    <script src="app/browser.js"></script>
+    <script src="app/feedback.js"></script>
+    <script src="app/validation.js"></script>
+    <script src="app/railway.js"></script>
+    <script src="app/tools.js"></script>
+    <!-- endbuild -->
+
+</body>
+</html>

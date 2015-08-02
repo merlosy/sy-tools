@@ -1,11 +1,12 @@
+'use strict';
 
 angular.module('sy-tools.feedback', [])
     
 .constant('FEEDBACK', {
-	unavailable: "The server is currently unavailable. Please, try again later.",
-	failure: "An error has occured. Please, contact support or try again later.",
+	unavailable: 'The server is currently unavailable. Please, try again later.',
+	failure: 'An error has occured. Please, contact support or try again later.',
     level : {
-        'default' : "default",
+        'default' : 'default',
         success : 'success',
         info : 'info',
         warning : 'warning',
@@ -14,7 +15,7 @@ angular.module('sy-tools.feedback', [])
 })
 
 .constant('HTTP_CODE', {
-	pattern_4XX: /^4[0-9]{2}$/
+	pattern4XX: /^4[0-9]{2}$/
 })
 
 .directive('syFeedback', ['$log', 'Feedback', function($log, Feedback) {
@@ -50,19 +51,20 @@ angular.module('sy-tools.feedback', [])
 	    return JSON.stringify(a1)===JSON.stringify(a2);
 	};
 	
-	var formatMessage = function(messages, level, closable) {
+	var formatMessage = function(messages, level, options) {
 		var data = {
             level: level || FEEDBACK.level.default,
-            closable : angular.isDefined(closable)? closable : true
+            closable : angular.isObject(options) && angular.isDefined(options.closable)? options.closable : true,
+            message : angular.isObject(options) && angular.isDefined(options.message)? options.message : FEEDBACK.failure
         };
 		
 		if ( !angular.isArray(messages) ) {
-			data.message = isEmpty(messages)? FEEDBACK.failure : messages;
+			data.message = isEmpty(messages)? data.message : messages;
 		}
 		else {
       	  	switch (messages.length) {
       	  		case 0:
-      	  			data.message = FEEDBACK.failure;
+      	  			data.message = data.message;
       	  			break;
       	  		case 1:
       	  			data.message = messages[0];
@@ -97,8 +99,8 @@ angular.module('sy-tools.feedback', [])
         this.alerts = new Array();
     }
     
-    Feedback.prototype.local = function (content, level, closable) {
-        var toAdd = formatMessage(content, level, closable);
+    Feedback.prototype.local = function (content, level, options) {
+        var toAdd = formatMessage(content, level, options);
         if ( hasDuplicates(this.alerts, toAdd) ) return;
         this.alerts.push( toAdd );
     };
@@ -126,7 +128,7 @@ angular.module('sy-tools.feedback', [])
         		  	}
         		}
         		break;
-        	case HTTP_CODE.pattern_4XX.test( error.status ):
+        	case HTTP_CODE.pattern4XX.test( error.status ):
         	  	arrayMessages = FEEDBACK.failure;
           		break;
         	case 503:

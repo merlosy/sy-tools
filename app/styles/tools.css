@@ -5,3 +5,86 @@ body {
 .container {
 	background-color: #fff;
 }
+
+/************************** 
+ *			RAILWAY
+ **************************/
+
+.railway {
+    display: block;
+}
+
+.railway-row-track {
+	width: 100%;
+	text-align: center;
+}
+.railway-row-track .railway-row-col {
+	display: inline-block;
+	width: 80%;
+}
+
+.railway-track {
+    display: block;
+    position: relative;
+    width: 100%;
+}
+
+.railway-track > div {
+	display: inline-block;
+	vertical-align: top;
+	position: relative;
+	text-align: center;
+}
+.railway-track > div > div {
+    display: inline-block;
+    vertical-align: top;
+    border-bottom: 1px solid #00a1e3;
+    height: 10px;
+    width: calc(50% - 10px);
+}
+.railway-track > div > div:nth-child(2) {
+    display: inline-block;
+    position: relative;
+    text-align: center;
+    line-height: 1.3em;
+    color: #00a1e3;
+    width: 20px !important;
+    height: 20px;
+    border-radius: 10px;
+    border: 1px solid #00a1e3;
+    z-index: 99;
+}
+/*   trim railway   */
+ .railway-track > div.fitted:first-child > div:nth-child(1){
+    display: none;
+}
+.railway-track > div.fitted:first-child > div:nth-child(3){
+    width: calc(100% - 20px);
+}
+.railway-track > div.fitted:last-child > div:nth-child(3) {
+    display: none;
+}
+.railway-track > div.fitted:last-child > div:nth-child(1){
+    width: calc(100% - 20px);
+} 
+
+.railway-track > div.active > div:nth-child(2) {
+	color: #fff;
+    background-color: #00a1e3;
+}
+.railway-track > div.active span {
+	font-weight: bold;
+}
+.railway-track > div span {
+    color: #646464;
+    display: block;
+    text-align:center;
+    margin-bottom: 10px;
+    font-size: 0.9em;
+}
+.railway-track > div.fitted:first-child span {
+    text-align:left;
+}
+.railway-track > div.fitted:last-child span {
+    text-align:right;
+}

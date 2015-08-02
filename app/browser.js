@@ -1,79 +1,79 @@
-
+'use strict';
 /**
  * based on 
  * https://github.com/srfrnk/ng-device-detector/blob/master/ng-device-detector.js
  */
 
-angular.module("sy-tools.browser",[])
-.constant("DEVICES", {
-	ANDROID: "android",
-	IPAD: "ipad",
-	IPHONE: "iphone",
-	IPOD: "ipod",
-	BLACKBERRY: "blackberry",
-	FIREFOXOS: "firefoxos",
-	WINDOWSPHONE: "windows-phone",
-	PS4: "ps4",
-	VITA: "vita",
-	UNKNOWN: "unknown"
+angular.module('sy-tools.browser',[])
+.constant('DEVICES', {
+	ANDROID: 'android',
+	IPAD: 'ipad',
+	IPHONE: 'iphone',
+	IPOD: 'ipod',
+	BLACKBERRY: 'blackberry',
+	FIREFOXOS: 'firefoxos',
+	WINDOWSPHONE: 'windows-phone',
+	PS4: 'ps4',
+	VITA: 'vita',
+	UNKNOWN: 'unknown'
 })
-.constant("OS", {
-	WINDOWS: "windows",
-	MAC: "mac",
-	IOS: "ios",
-	ANDROID: "android",
-	LINUX: "linux",
-	UNIX: "unix",
-	FIREFOXOS: "firefoxos",
-	WINDOWSPHONE: "windows-phone",
-	PS4: "ps4",
-	VITA: "vita",
-	UNKNOWN: "unknown"
+.constant('OS', {
+	WINDOWS: 'windows',
+	MAC: 'mac',
+	IOS: 'ios',
+	ANDROID: 'android',
+	LINUX: 'linux',
+	UNIX: 'unix',
+	FIREFOXOS: 'firefoxos',
+	WINDOWSPHONE: 'windows-phone',
+	PS4: 'ps4',
+	VITA: 'vita',
+	UNKNOWN: 'unknown'
 })
-.constant("BROWSERS", {
+.constant('BROWSERS', {
 	CHROME: {
-		name: "chrome",
-		pattern: "Chrome",
-		min_version: 36
+		name: 'chrome',
+		pattern: 'Chrome',
+		minVersion: 36
 	},
 	FIREFOX: {
-		name: "firefox",
-		pattern: "Firefox",
-		min_version: 30
+		name: 'firefox',
+		pattern: 'Firefox',
+		minVersion: 30
 	},
 	SAFARI: {
-		name: "safari",
-		pattern: "Safari",
-		min_version: 536	// equivalent to Safari 6, 537 for Safari 7
+		name: 'safari',
+		pattern: 'Safari',
+		minVersion: 536	// equivalent to Safari 6, 537 for Safari 7
 	},
 	OPERA: {
-		name: "opera",
-		pattern: "Opera"
+		name: 'opera',
+		pattern: 'Opera'
 	},
 	IE: {
-		name: "IE",
-		pattern: "MSIE",
-		min_version: 9
+		name: 'IE',
+		pattern: 'MSIE',
+		minVersion: 9
 	},
 	IE11: {
-		name: "IE-trident",
-		pattern: "Trident",
-		min_version: 5
+		name: 'IE-trident',
+		pattern: 'Trident',
+		minVersion: 5
 	},
 	PS4: {
-		name: "ps4",
-		pattern: "Mozilla 5.0 (PlayStation 4"
+		name: 'ps4',
+		pattern: 'Mozilla 5.0 (PlayStation 4'
 	},
 	VITA: {
-		name: "vita",
-		pattern: "Mozilla 5.0 (PlayStation Vita"
+		name: 'vita',
+		pattern: 'Mozilla 5.0 (PlayStation Vita'
 	},
 	UNKNOWN: {
-		name: "unknown",
-		pattern: "unknown"
+		name: 'unknown',
+		pattern: 'unknown'
 	}
 })
-.factory("Device", ["$window", "DEVICES", "BROWSERS", "OS", function ($window, DEVICES, BROWSERS, OS) {
+.factory('Device', ['$window', 'DEVICES', 'BROWSERS', 'OS', function ($window, DEVICES, BROWSERS, OS) {
 	var ua=$window.navigator.userAgent;
 
 	var Device = function(){
@@ -117,50 +117,51 @@ angular.module("sy-tools.browser",[])
 		this.raw.device[DEVICES.PS4]=/\bMozilla\/5.0 \(PlayStation 4\b/.test(ua);
 		this.raw.device[DEVICES.VITA]=/\bMozilla\/5.0 \(Play(S|s)tation Vita\b/.test(ua);
 
+		var i;
 		// reduce to single OS
-		var tmp_os = new Array(),
-			tmp_raw_os = this.raw.os;
-		for(var i in OS) {
-			tmp_os.push( OS[i] );
+		var tmpOs = [],
+			tmpRawOs = this.raw.os;
+		for(i in OS) {
+			tmpOs.push( OS[i] );
 		}
-		this.os = tmp_os.reduce(function(previousValue, currentValue) {
-        	 return (previousValue===OS.UNKNOWN && tmp_raw_os[currentValue])? currentValue : previousValue;
+		this.os = tmpOs.reduce(function(previousValue, currentValue) {
+        	 return (previousValue===OS.UNKNOWN && tmpRawOs[currentValue])? currentValue : previousValue;
         },OS.UNKNOWN);
 		
 		// reduce to single browser
-		var tmp_browser = new Array(),
-			tmp_raw_browser = this.raw.browser;
-		for(var i in BROWSERS) {
-			tmp_browser.push( BROWSERS[i].name );
+		var tmpBrowser = [],
+			tmpRawBrowser = this.raw.browser;
+		for(i in BROWSERS) {
+			tmpBrowser.push( BROWSERS[i].name );
 		}
-		this.browser.name = tmp_browser.reduce(function(previousValue, currentValue) {
-	    	  return (previousValue===BROWSERS.UNKNOWN.name && tmp_raw_browser[currentValue])? currentValue : previousValue;
+		this.browser.name = tmpBrowser.reduce(function(previousValue, currentValue) {
+	    	  return (previousValue===BROWSERS.UNKNOWN.name && tmpRawBrowser[currentValue])? currentValue : previousValue;
 	     },BROWSERS.UNKNOWN.name);
 		
 		// reduce to single device
-		var tmp_devices = new Array(),
-			tmp_raw_device = this.raw.device;
-		for(var i in DEVICES) {
-			tmp_devices.push( DEVICES[i] );
+		var tmpDevices = [],
+			tmpRawDevice = this.raw.device;
+		for(i in DEVICES) {
+			tmpDevices.push( DEVICES[i] );
 		}
-		this.device = tmp_devices.reduce(function(previousValue, currentValue) {
-        	 return (previousValue===DEVICES.UNKNOWN && tmp_raw_device[currentValue])? currentValue : previousValue;
+		this.device = tmpDevices.reduce(function(previousValue, currentValue) {
+        	 return (previousValue===DEVICES.UNKNOWN && tmpRawDevice[currentValue])? currentValue : previousValue;
         },DEVICES.UNKNOWN);
 		
 		// find version of deducted browser
 		var browser = BROWSERS.UNKNOWN;
-		for(var i in BROWSERS) {
-			if (BROWSERS[i].name === this.browser.name)
+		for(i in BROWSERS) {
+			if (BROWSERS[i].name === this.browser.name){
 				browser = BROWSERS[i];
+			}
 		}
 		var versionArray = ua.substr( ua.indexOf(browser.pattern) + browser.pattern.length ).match(/\d+(\.\d+)?/);
-		this.browser.version = versionArray.length>0? versionArray[0] : "";
+		this.browser.version = versionArray.length>0? versionArray[0] : '';
 		
 		// is it supported
-		if ( angular.isDefined(browser.min_version) )
-			this.isSupported = (browser.min_version <= parseFloat(this.browser.version) );
-		else
-			this.isSupported = false;
+		this.isSupported = angular.isDefined(browser.minVersion)?
+				(browser.minVersion <= parseFloat(this.browser.version) )
+				: false;
 
 	};
 
@@ -178,19 +179,19 @@ angular.module("sy-tools.browser",[])
 
 	return Device;
 }])
-.directive('deviceDetector', ["Device", "$log", "$window", "$sce", "$rootScope", function (Device, $log, $window, $sce, $rootScope) {
+.directive('deviceDetector', ['Device', '$log', '$window', '$sce', function (Device, $log, $window, $sce) {
 	return {
-		restrict: "E",
+		restrict: 'E',
 		replace : true,
 		template: '<div ng-show="!device.isSupported" class="alert alert-warning" role="alert" ng-bind-html="texte"></div>',
-		link: function (scope, element, attrs) {
+		link: function (scope, element) {
 			
 			scope.device = new Device();
 
 	    	$log.debug(scope.device);
 	    	
 	    	scope.content = JSON.stringify(scope.device);
-	    	scope.texte = $sce.trustAsHtml("The browser is not supported by this application.");
+	    	scope.texte = $sce.trustAsHtml('The browser is not supported by this application.');
 	    		    	
 			element.addClass('os-'+scope.device.os);
 			element.addClass('browser-'+scope.device.browser.name);

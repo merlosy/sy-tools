@@ -1,3 +1,4 @@
+'use strict';
 
 angular.module('sy-tools.birthdate', [])
 
@@ -24,7 +25,7 @@ angular.module('sy-tools.birthdate', [])
         require: 'ngModel',
         replace: true,
         transclude: true,
-        templateUrl : "app/utils/birthdate.template.html",
+        templateUrl : "app/birthdate.template.html",
 		scope : {
 			dateValue : '=ngModel'
 		},

@@ -17,8 +17,9 @@ module.exports = function (grunt) {
   require('load-grunt-tasks')(grunt);
 
   // Configurable paths
-  var config = {
-    app: 'app',
+  var appConfig = {
+    app: require('./bower.json').appPath || 'app',
+    //app: 'app',
     config: 'config',
     demo: 'demo',
     dist: 'dist'
@@ -28,7 +29,7 @@ module.exports = function (grunt) {
   grunt.initConfig({
 
     // Project settings
-    config: config,
+    config: appConfig,
 
     // Watches files for changes and runs tasks based on the changed files
     watch: {
@@ -48,7 +49,7 @@ module.exports = function (grunt) {
       },
       jstest: {
         files: ['test/spec/{,*/}*.js'],
-        tasks: ['test:watch']
+        tasks: ['newer:jshint:test', 'karma']
       },
       gruntfile: {
         files: ['Gruntfile.js']
@@ -67,7 +68,7 @@ module.exports = function (grunt) {
         files: [
           '<%= config.demo %>/{,*/}*.html',
           '.tmp/styles/{,*/}*.css',
-          '<%= config.app %>/images/{,*/}*'
+          '<%= config.app %>/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}'
         ]
       }
     },
@@ -135,22 +136,29 @@ module.exports = function (grunt) {
         jshintrc: '.jshintrc',
         reporter: require('jshint-stylish')
       },
-      all: [
-        'Gruntfile.js',
-        '<%= config.app %>/{,*/}*.js',
-        'test/spec/{,*/}*.js'
-      ]
+      all: {
+        src: [
+          'Gruntfile.js',
+          '<%= config.app %>/{,*/}*.js'
+        ]
+      },
+      test: {
+        options: {
+          jshintrc: 'test/.jshintrc'
+        },
+        src: ['test/spec/{,*/}*.js']
+      }
     },
 
     // Mocha testing framework configuration options
-    mocha: {
+    /*mocha: {
       all: {
         options: {
           run: true,
           urls: ['http://<%= connect.test.options.hostname %>:<%= connect.test.options.port %>/index.html']
         }
       }
-    },
+    },*/
 
     // Add vendor prefixed styles
     autoprefixer: {
@@ -168,13 +176,29 @@ module.exports = function (grunt) {
     },
 
     // Automatically inject Bower components into the HTML file
-    /*wiredep: {
-      app: {
+    wiredep: {
+      /*app: {
         ignorePath: /^\/|\.\.\//,
         src: ['index.html']
         //exclude: ['bower_components/bootstrap/dist/js/bootstrap.js']
+      },*/
+      test: {
+        devDependencies: true,
+        src: '<%= karma.unit.configFile %>',
+        ignorePath:  /\.\.\//,
+        fileTypes:{
+          js: {
+            block: /(([\s\t]*)\/{2}\s*?bower:\s*?(\S*))(\n|\r|.)*?(\/{2}\s*endbower)/gi,
+              detect: {
+                js: /'(.*\.js)'/gi
+              },
+              replace: {
+                js: '\'{{filePath}}\','
+              }
+            }
+          }
       }
-    },*/
+    },
 
     concat: {
       options: {
@@ -235,6 +259,14 @@ module.exports = function (grunt) {
       dist: [
         'copy:styles'
       ]
+    },
+
+    // Test settings
+    karma: {
+      unit: {
+        configFile: 'test/karma.conf.js',
+        singleRun: true
+      }
     }
   });
 
@@ -267,6 +299,7 @@ module.exports = function (grunt) {
     if (target !== 'watch') {
       grunt.task.run([
         'clean:server',
+        'wiredep',
         'concurrent:test',
         'autoprefixer'
       ]);
@@ -274,7 +307,7 @@ module.exports = function (grunt) {
 
     grunt.task.run([
       'connect:test',
-      'mocha'
+      'karma'
     ]);
   });
 

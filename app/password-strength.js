@@ -16,15 +16,14 @@
 
 	passStrengthModule.directive('syPasswordStrength', ['$log', '$rootScope', function($log, $rootScope) {
 		return {
-			template: '<progressbar value="value" type="{{type}}" title="Password strength">{{niveau}}</progressbar>'
-						+'<div>{{message}}</div>',
+			template: '<progressbar value="value" type="{{type}}" title="Password strength">{{niveau}}</progressbar><div>{{message}}</div>',
 			restrict: 'E',
-			replace: false,
+			//replace: false,
 			scope: {
-				pwd: '=syPassword',
-				value: '=syStrength'
+				pwd: '=password',
+				value: '=strength'
 			},
-			link: function(scope /*, elem, attrs*/ ) {
+			link: function(scope ) {
 				
 				var displayedMessage = "Weak";
 
@@ -74,7 +73,7 @@
 						}
 //						$log.debug(rule.consecutif+' caractères consécutifs trouvés');
 
-						var repeatedChars = new Array();
+						var repeatedChars = [];
 						var repeatedMax = 0;
 						for ( i=0 ; i<pArray.length ; i++) {
 							if (angular.isUndefined( repeatedChars [ pArray[i] ] ))
