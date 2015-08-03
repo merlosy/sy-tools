@@ -10,6 +10,7 @@ before-install:
   - sh -e /etc/init.d/xvfb start
 before-script:
   - npm install -g bower grunt-cli karma
+  - npm install
   - bower install
   - grunt build
 script: grunt
