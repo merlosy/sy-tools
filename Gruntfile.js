@@ -265,6 +265,11 @@ module.exports = function (grunt) {
     karma: {
       unit: {
         configFile: 'test/karma.conf.js'
+      },
+      travis: {
+        configFile: 'test/karma.conf.js',
+        singleRun: true,
+        browsers: ['PhantomJS']
       }
     }
   });
@@ -294,6 +299,12 @@ module.exports = function (grunt) {
     grunt.task.run([target ? ('serve:' + target) : 'serve']);
   });
 
+  grunt.registerTask('test-travis', function (target) {
+    grunt.task.run([
+      'karma:travis'
+    ]);
+  });
+
   grunt.registerTask('test', function (target) {
     if (target !== 'watch') {
       grunt.task.run([
@@ -306,7 +317,7 @@ module.exports = function (grunt) {
 
     grunt.task.run([
       'connect:test',
-      'karma'
+      'karma:unit'
     ]);
   });
 
