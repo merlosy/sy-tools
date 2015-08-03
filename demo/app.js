@@ -1,43 +1,56 @@
-(function(){
+(function() {
 
-	'use strict';
+   'use strict';
 
-	var app = angular.module('sy-tools-demo', [
-        // vendor modules
-		'ui.router',
-		//'ngCookies',
-        //'ui.bootstrap',
-        //'ui-notification',
-        // application modules
-        'sy-tools',
-        'sy-tools.railway-demo'
-    ]);
+   var appModule = angular.module('sy-tools-demo', [
+      'ngAnimate',
+      'ngAria',
+      'ui.router',
+      'sy-tools',
+      'sy-tools.demo-feedback',   
+      'sy-tools.demo-password-strength',   
+      'sy-tools.demo-railway',   
+      'sy-tools.demo-device'    
+      ]);
 
-    app.config(['$stateProvider', '$logProvider', '$urlRouterProvider', '$provide', '$httpProvider', 
-                             function ($stateProvider, $logProvider, $urlRouterProvider, $provide, $httpProvider) {
-        
-    	
-    	$stateProvider.state('railway', {
-    		url: "/",
-    		views : {
-    			'' : {
-    				templateUrl: 'demo/railway.html'
-    			}
-    		}
-    	});
-    	    	
-        $urlRouterProvider.otherwise('/');
-        
-    }]);
+   appModule.config(['$urlRouterProvider', '$stateProvider', '$logProvider', 
+                  function($urlRouterProvider, $stateProvider, $logProvider) {
 
-    app.controller('AppController', ['$scope', '$log', function($scope, $log){
-        $log.debug("AppController");
+      $logProvider.debugEnabled(true);
 
-        $scope.isEmpty = function(str) {
-            return angular.isUndefined(str) || str==null || str=="" ; 
-        };
+      $stateProvider.state('home', {
+         url: "/",
+         templateUrl: 'demo/home.html'
+      });
 
-    }]);
+      $stateProvider.state('feedback', {
+         url: "/feedback",
+         templateUrl: 'demo/feedback.html'
+      });
 
-    
+      $stateProvider.state('device', {
+         url: "/device",
+         templateUrl: 'demo/device.html'
+      });
+
+      $stateProvider.state('password', {
+         url: "/password",
+         templateUrl: 'demo/password.html'
+      });
+
+      $stateProvider.state('railway', {
+         url: "/railway",
+         templateUrl: 'demo/railway.html'
+      });
+
+      $urlRouterProvider.otherwise('/');
+      
+   }]);
+
+   appModule.controller('AppController', ['$scope', '$location', '$log', function($scope, $location, $log){
+
+      $log.debug("IN DEV");
+      $scope.test = "It is working";
+   }]);
+
 })();

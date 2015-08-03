@@ -42,7 +42,6 @@
                 previous: '&onPrevious'
             },
             link: function(scope, element, attrs, ctrl) {
-                $log.debug('RAILWAY LINK');
                 var options = {
                     trimSteps : attrs.railwayTrimSteps? attrs.railwayTrimSteps==="true" : RAILWAY.trimSteps,
                     showLabels : attrs.railwayShowLabels? attrs.railwayShowLabels==="true" : RAILWAY.showLabels,
@@ -55,7 +54,6 @@
                 $timeout(function(){
 
                    if (scope.railway.options.showTracks) {
-                        $log.debug(scope.railway.options);
 
                         var nb = scope.railway.children.length;
                         var steps = scope.railway.children;
@@ -86,8 +84,6 @@
 
             },
             controller: function ($scope) {
-                $log.debug('RAILWAY CONTROLLER');
-
                 $scope.goNext = function(){
                     $scope.next();
                     $scope.railway.next();

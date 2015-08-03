@@ -2,12 +2,10 @@
 
 	'use strict';
 
-	var app = angular.module('sy-tools.railway-demo', []);
+	var app = angular.module('sy-tools.demo-railway', []);
 
     app.controller('RailwayController', ['$scope', '$log', '$timeout', function($scope, $log, $timeout){
         $log.debug("RailwayController");
-
-        $scope.test = "Here we go!";
 
         $scope.endRailway = function() {
             alert("GAME OVER!!");
