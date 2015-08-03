@@ -3,6 +3,25 @@
     
     var railwayModule = angular.module('sy-tools.railway', []);
     
+    railwayModule.run(["$templateCache", function($templateCache) {
+        $templateCache.put('sy-tools/template/railway.html', 
+            ['<div class="railway-row-track" >',
+            '<div class="railway-row-col">',
+                '<div class="railway-track" ng-if="railway.options.showTracks"><div ng-repeat="child in railway.children track by $index" ng-class="{\'active\':railway.current>=$index}">',
+                    '<div></div><div title={{labels[$index]}}>{{$index+1}}</div><div></div>',
+                    '<span ng-show="railway.options.showLabels" ng-bind="labels[$index]"></span>',
+                '</div></div>',
+            '</div> </div>',
+            '<div class="railway" ng-transclude></div>',
+            '<div class="text-center railway-btn-group" ng-show="railway.children.length>0">',
+                '<button class="btn btn-primary btn-railway" ng-disabled="!railway.hasPrevious()" ng-click="goBack()" >Previous</button>',
+                '<button class="btn btn-primary btn-railway" ng-disabled="!railway.hasNext()" ng-click="goNext()" >Next</button>',
+                '<button class="btn btn-success btn-railway" ng-show="railway.isLast()" ng-click="complete()" >Finish</button>',
+            '</div>'
+            ].join('')
+        );
+    }]);
+
     railwayModule.constant('RAILWAY', {
     	trimSteps: true,
     	showLabels: true,
@@ -14,29 +33,16 @@
             restrict: 'E',
             replace: false,
             transclude: true,
-            require: 'ngModel',
-            //priority: 1000,
-            template: ['<div class="railway-row-track" >',
-                '<div class="railway-row-col">',
-                //'<railway-track></railway-track>',
-                    '<div class="railway-track" ng-if="railway.options.showTracks"><div ng-repeat="child in railway.children track by $index" ng-class="{\'active\':railway.current>=$index}">',
-                        '<div></div><div title={{labels[$index]}}>{{$index+1}}</div><div></div>',
-                        '<span ng-show="railway.options.showLabels" ng-bind="labels[$index]"></span>',
-                    '</div></div>',
-                '</div> </div>',
-                '<div class="railway" ng-transclude></div>',
-                '<div class="text-center railway-btn-group">',
-                '<button class="btn btn-primary btn-railway" ng-disabled="!railway.hasPrevious()" ng-click="railway.previous()" >Previous</button>',
-                '<button class="btn btn-primary btn-railway" ng-disabled="!railway.hasNext()" ng-click="railway.next()" >Next</button>',
-                '</div>'
-                ].join(''),
+            require: '?ngModel',
+            templateUrl: 'sy-tools/template/railway.html',
             scope: {
-            	railway :'=ngModel'
+            	railway :'=?ngModel',
+                complete: '&onComplete',
+                next: '&onNext',
+                previous: '&onPrevious'
             },
             link: function(scope, element, attrs, ctrl) {
-                $log.debug(attrs.railwayTrimSteps);
-                $log.debug(attrs.railwayShowLabels);
-                $log.debug(attrs.railwayShowTracks);
+                $log.debug('RAILWAY LINK');
                 var options = {
                     trimSteps : attrs.railwayTrimSteps? attrs.railwayTrimSteps==="true" : RAILWAY.trimSteps,
                     showLabels : attrs.railwayShowLabels? attrs.railwayShowLabels==="true" : RAILWAY.showLabels,
@@ -46,10 +52,7 @@
 
                 scope.labels = new Array();
 
-                //$timeout(function(){
-                    //scope.RAILWAY = scope.railwayOptions || RAILWAY;
-                
-                    //$log.debug(scope.RAILWAY);
+                $timeout(function(){
 
                    if (scope.railway.options.showTracks) {
                         $log.debug(scope.railway.options);
@@ -62,11 +65,7 @@
                         }
                         
                         if (nb>1) {
-                            $log.debug("tracks");
-                            // cannot access .railway-track before instanciated, selector find 0 match
-                            $log.debug( element.children('.railway-track'));
-                            $log.debug( $(element).closest('railway-row-col'));
-                            var main_blocs = angular.element('.railway-track > div');
+                            var main_blocs = element.find('.railway-track').children();
                                                     
                             if (scope.railway.options.trimSteps) {
                                 var larg_percent = 100/nb;
@@ -83,67 +82,38 @@
                         else 
                             angular.element('.railway-track > div').css('width', '100%');
                     }
-                //});
+                });
 
+            },
+            controller: function ($scope) {
+                $log.debug('RAILWAY CONTROLLER');
+
+                $scope.goNext = function(){
+                    $scope.next();
+                    $scope.railway.next();
+                };
+                $scope.goBack = function(){
+                    $scope.previous();
+                    $scope.railway.previous();
+                };
+
+                this.getRailway = function() {
+                    return $scope.railway;
+                }
             }
         };
     }]);
-    
-    /*railwayModule.directive('railwayTrack', ['$log', 'Railway', '$timeout', 'RAILWAY', function($log, Railway, $timeout, RAILWAY) {
+
+    /*railwayModule.directive('railwayStation', ['$log', 'Railway', 'RAILWAY', '$timeout', function($log, Railway, RAILWAY, $timeout) {
         return {
-            restrict: 'EA',
-            replace: true,
-            transclude: false,
-            template: '<div class="railway-track" ng-if="railway.options.showTracks"><div ng-repeat="child in railway.children track by $index" ng-class="{\'active\':railway.current>=$index}">'
-            		+'<div></div><div title={{labels[$index]}}>{{$index+1}}</div><div></div>'
-            		+'<span ng-show="railway.options.showLabels" ng-bind="labels[$index]"></span>'
-            		+'</div></div>',
-            link: function(scope, element, attrs, ctrl) {
-            	
-            	scope.labels = new Array();
-            	
-                
-                $timeout(function(){
-                    //scope.RAILWAY = scope.railwayOptions || RAILWAY;
-                
-                    //$log.debug(scope.RAILWAY);
-
-            	   if (scope.railway.options.showTracks) {
-                        $log.debug(scope.railway.options);
-
-	            		var nb = scope.railway.children.length;
-	            		var steps = scope.railway.children;
-	            		
-	            		for (var i=0; i<steps.length; i++) {
-	        				scope.labels.push($(steps[i]).attr('name'));
-	        			}
-	            		
-	            		if (nb>1) {
-                            $log.debug("tracks");
-                            // cannot access .railway-track before instanciated, selector find 0 match
-                            $log.debug(scope.railway.element.children('.railway-track'));
-                            $log.debug( $(element).closest('railway-row-col'));
-	            			var main_blocs = angular.element('.railway-track > div');
-	            			            			
-	            			if (scope.railway.options.trimSteps) {
-	            				var larg_percent = 100/nb;
-	            				main_blocs.css('width', larg_percent+'%').addClass('fitted');
-	            			}
-	            			else {
-	            				var larg_percent = 100/(2*(nb-1));
-	                			main_blocs.css('width', 2*larg_percent+'%');
-	                			angular.element(main_blocs[0]).css('width', larg_percent+'%');
-	                			angular.element(main_blocs[main_blocs.length-1]).css('width', larg_percent+'%');
-	            			}
-	            			
-	            		}
-	            		else 
-	            			angular.element('.railway-track > div').css('width', '100%');
-                    }
-            	});
+            restrict: 'E',
+            require: '^railway',
+            scope: {
+                complete: '&onComplete'
             }
         };
     }]);*/
+    
     
     /**
      * Object oriented declaration of the Step-by-step navigation object
@@ -157,11 +127,8 @@
     	var Railway = function(element, options) {
     		this.children = element.children('.railway').children('railway-station');
             this.element = element;
-            //$log.debug(element.children());
-            //$log.debug(this.children);
             this.options = options;
     		this.current = false;
-    		this.height = 0;
     		
     		if ( this.children.length>0 ){
     			this.current = 0;
@@ -207,6 +174,13 @@
     	Railway.prototype.hasPrevious = function(){
     		return this.current > 0;
     	};
+
+        /**
+         * @returns true if it is the last step, false otherwise 
+         */
+        Railway.prototype.isLast = function(){
+            return this.current == this.children.length-1;
+        };
         
         return Railway;
     }]);

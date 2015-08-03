@@ -1,0 +1,73 @@
+<div ng-controller="RailwayController">
+	<h1>Step-by-step Railway demo</h1>
+	{{test}}
+
+	<span>Active step below: {{active}}</span>
+	<railway ng-model="railway" railway-trim-steps="false" 
+		on-complete="endRailway()"
+		on-next="nextStep()"
+		on-previous="previousStep()">
+
+		<railway-station name="Step 1">
+			This is a station
+		</railway-station>
+
+		<railway-station name="Step 2">
+			This is another station
+		</railway-station>
+
+		<railway-station name="Final">
+			This is the final step!
+		</railway-station>
+	</railway>
+
+	<railway>
+		<p>This is the same for all the steps!</p>
+
+		<railway-station name="Step 1">
+			This is a station
+		</railway-station>
+
+		<railway-station name="Step 2">
+			This is another station
+		</railway-station>
+
+		<railway-station name="Keep up">
+			Here we are
+		</railway-station>
+
+		<railway-station name="Final">
+			This is the final step!
+		</railway-station>
+	</railway>
+
+	<railway railway-show-labels="false">
+
+		<railway-station name="Step 1">
+			This is a station
+		</railway-station>
+
+		<railway-station name="Step 2">
+			This is another station
+		</railway-station>
+
+		<railway-station name="Final">
+			This is the final step!
+		</railway-station>
+	</railway>
+
+	<railway>
+		<railway-station name="Step 1">
+			This is a station
+		</railway-station>
+
+		<railway-station name="Step 2">
+			This is another station
+		</railway-station>
+
+		<railway-station name="Final">
+			This is the final step!
+		</railway-station>
+	</railway>
+
+</div>
