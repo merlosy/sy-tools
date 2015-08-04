@@ -7,11 +7,39 @@ angular.module('sy-tools', [
     'sy-tools.feedback',
     //'sy-tools.footer',
     'sy-tools.validation',
+    'sy-tools.railway',
     //'sy-tools.password-strength'
 ]);
 
+'use strict';
 
 angular.module('sy-tools.birthdate', [])
+
+.run(["$templateCache", function($templateCache) {
+    $templateCache.put('sy-tools/template/birthdate.html', 
+        ['<div class="row" ng-cloak>',
+            '<div class="col-sm-4 col-xs-4" style="width:30%">',
+                '<input type="text" name="day" class="form-control" ng-model="day" maxlength=2 ',
+                    'id="birthdate-jour" ng-change="setDateFromFields()" ',
+                    'title="{{lang.title_day}}" placeholder="{{lang.placeholder_day}}" />',
+           '</div>',
+            '<div class="col-sm-4 col-xs-4" style="width:30%">',
+                '<input type="text" name="month" class="form-control" ng-model="month" maxlength=2',
+                    'id="birthdate-mois" ng-change="setDateFromFields()" ',
+                    'title="{{lang.title_month}}" placeholder="{{lang.placeholder_month}}" />',
+            '</div>',
+            '<div class="col-sm-4 col-xs-4" style="width:40%">',
+                '<div class="form-group has-feedback" style="margin-bottom:0">',
+                    '<input type="text" name="year" class="form-control" ng-model="year" maxlength=4 ',
+                        'id="birthdate-annee" ng-change="setDateFromFields()" ',
+                        'title="{{lang.title_year}}" placeholder="{{lang.placeholder_year}}" />',
+                    '<span class="glyphicon form-control-feedback glyphicon-asterisk"></span>',
+                '</div>',
+            '</div>',
+        '</div>'
+        ].join('')
+    );
+}])
 
 .constant('BIRTHDATE', {
     lang: {
@@ -36,7 +64,7 @@ angular.module('sy-tools.birthdate', [])
         require: 'ngModel',
         replace: true,
         transclude: true,
-        templateUrl : "app/utils/birthdate.template.html",
+        templateUrl : "sy-tools/template/birthdate.html",
 		scope : {
 			dateValue : '=ngModel'
 		},
@@ -97,76 +125,82 @@ angular.module('sy-tools.birthdate', [])
     };
 }]);
 
-angular.module("sy-tools.browser",[])
-.constant("DEVICES", {
-	ANDROID: "android",
-	IPAD: "ipad",
-	IPHONE: "iphone",
-	IPOD: "ipod",
-	BLACKBERRY: "blackberry",
-	FIREFOXOS: "firefoxos",
-	WINDOWSPHONE: "windows-phone",
-	PS4: "ps4",
-	VITA: "vita",
-	UNKNOWN: "unknown"
+'use strict';
+/**
+ * based on 
+ * https://github.com/srfrnk/ng-device-detector/blob/master/ng-device-detector.js
+ */
+
+angular.module('sy-tools.browser',[])
+.constant('DEVICES', {
+	ANDROID: 'android',
+	IPAD: 'ipad',
+	IPHONE: 'iphone',
+	IPOD: 'ipod',
+	BLACKBERRY: 'blackberry',
+	FIREFOXOS: 'firefoxos',
+	WINDOWSPHONE: 'windows-phone',
+	PS4: 'ps4',
+	VITA: 'vita',
+	UNKNOWN: 'unknown'
 })
-.constant("OS", {
-	WINDOWS: "windows",
-	MAC: "mac",
-	IOS: "ios",
-	ANDROID: "android",
-	LINUX: "linux",
-	UNIX: "unix",
-	FIREFOXOS: "firefoxos",
-	WINDOWSPHONE: "windows-phone",
-	PS4: "ps4",
-	VITA: "vita",
-	UNKNOWN: "unknown"
+.constant('OS', {
+	WINDOWS: 'windows',
+	MAC: 'mac',
+	IOS: 'ios',
+	ANDROID: 'android',
+	LINUX: 'linux',
+	UNIX: 'unix',
+	FIREFOXOS: 'firefoxos',
+	WINDOWSPHONE: 'windows-phone',
+	PS4: 'ps4',
+	VITA: 'vita',
+	UNKNOWN: 'unknown'
 })
-.constant("BROWSERS", {
+.constant('BROWSERS', {
 	CHROME: {
-		name: "chrome",
-		pattern: "Chrome",
-		min_version: 36
+		name: 'chrome',
+		pattern: 'Chrome',
+		minVersion: 36
 	},
 	FIREFOX: {
-		name: "firefox",
-		pattern: "Firefox",
-		min_version: 30
+		name: 'firefox',
+		pattern: 'Firefox',
+		minVersion: 30
 	},
 	SAFARI: {
-		name: "safari",
-		pattern: "Safari",
-		min_version: 536	// equivalent to Safari 6, 537 for Safari 7
+		name: 'safari',
+		pattern: 'Safari',
+		minVersion: 536	// equivalent to Safari 6, 537 for Safari 7
 	},
 	OPERA: {
-		name: "opera",
-		pattern: "Opera"
+		name: 'opera',
+		pattern: 'Opera'
 	},
 	IE: {
-		name: "IE",
-		pattern: "MSIE",
-		min_version: 9
+		name: 'IE',
+		pattern: 'MSIE',
+		minVersion: 9
 	},
 	IE11: {
-		name: "IE-trident",
-		pattern: "Trident",
-		min_version: 5
+		name: 'IE-trident',
+		pattern: 'Trident',
+		minVersion: 5
 	},
 	PS4: {
-		name: "ps4",
-		pattern: "Mozilla 5.0 (PlayStation 4"
+		name: 'ps4',
+		pattern: 'Mozilla 5.0 (PlayStation 4'
 	},
 	VITA: {
-		name: "vita",
-		pattern: "Mozilla 5.0 (PlayStation Vita"
+		name: 'vita',
+		pattern: 'Mozilla 5.0 (PlayStation Vita'
 	},
 	UNKNOWN: {
-		name: "unknown",
-		pattern: "unknown"
+		name: 'unknown',
+		pattern: 'unknown'
 	}
 })
-.factory("Device", ["$window", "DEVICES", "BROWSERS", "OS", function ($window, DEVICES, BROWSERS, OS) {
+.factory('Device', ['$window', 'DEVICES', 'BROWSERS', 'OS', function ($window, DEVICES, BROWSERS, OS) {
 	var ua=$window.navigator.userAgent;
 
 	var Device = function(){
@@ -210,50 +244,51 @@ angular.module("sy-tools.browser",[])
 		this.raw.device[DEVICES.PS4]=/\bMozilla\/5.0 \(PlayStation 4\b/.test(ua);
 		this.raw.device[DEVICES.VITA]=/\bMozilla\/5.0 \(Play(S|s)tation Vita\b/.test(ua);
 
+		var i;
 		// reduce to single OS
-		var tmp_os = new Array(),
-			tmp_raw_os = this.raw.os;
-		for(var i in OS) {
-			tmp_os.push( OS[i] );
+		var tmpOs = [],
+			tmpRawOs = this.raw.os;
+		for(i in OS) {
+			tmpOs.push( OS[i] );
 		}
-		this.os = tmp_os.reduce(function(previousValue, currentValue) {
-        	 return (previousValue===OS.UNKNOWN && tmp_raw_os[currentValue])? currentValue : previousValue;
+		this.os = tmpOs.reduce(function(previousValue, currentValue) {
+        	 return (previousValue===OS.UNKNOWN && tmpRawOs[currentValue])? currentValue : previousValue;
         },OS.UNKNOWN);
 		
 		// reduce to single browser
-		var tmp_browser = new Array(),
-			tmp_raw_browser = this.raw.browser;
-		for(var i in BROWSERS) {
-			tmp_browser.push( BROWSERS[i].name );
+		var tmpBrowser = [],
+			tmpRawBrowser = this.raw.browser;
+		for(i in BROWSERS) {
+			tmpBrowser.push( BROWSERS[i].name );
 		}
-		this.browser.name = tmp_browser.reduce(function(previousValue, currentValue) {
-	    	  return (previousValue===BROWSERS.UNKNOWN.name && tmp_raw_browser[currentValue])? currentValue : previousValue;
+		this.browser.name = tmpBrowser.reduce(function(previousValue, currentValue) {
+	    	  return (previousValue===BROWSERS.UNKNOWN.name && tmpRawBrowser[currentValue])? currentValue : previousValue;
 	     },BROWSERS.UNKNOWN.name);
 		
 		// reduce to single device
-		var tmp_devices = new Array(),
-			tmp_raw_device = this.raw.device;
-		for(var i in DEVICES) {
-			tmp_devices.push( DEVICES[i] );
+		var tmpDevices = [],
+			tmpRawDevice = this.raw.device;
+		for(i in DEVICES) {
+			tmpDevices.push( DEVICES[i] );
 		}
-		this.device = tmp_devices.reduce(function(previousValue, currentValue) {
-        	 return (previousValue===DEVICES.UNKNOWN && tmp_raw_device[currentValue])? currentValue : previousValue;
+		this.device = tmpDevices.reduce(function(previousValue, currentValue) {
+        	 return (previousValue===DEVICES.UNKNOWN && tmpRawDevice[currentValue])? currentValue : previousValue;
         },DEVICES.UNKNOWN);
 		
 		// find version of deducted browser
 		var browser = BROWSERS.UNKNOWN;
-		for(var i in BROWSERS) {
-			if (BROWSERS[i].name === this.browser.name)
+		for(i in BROWSERS) {
+			if (BROWSERS[i].name === this.browser.name){
 				browser = BROWSERS[i];
+			}
 		}
 		var versionArray = ua.substr( ua.indexOf(browser.pattern) + browser.pattern.length ).match(/\d+(\.\d+)?/);
-		this.browser.version = versionArray.length>0? versionArray[0] : "";
+		this.browser.version = versionArray.length>0? versionArray[0] : '';
 		
 		// is it supported
-		if ( angular.isDefined(browser.min_version) )
-			this.isSupported = (browser.min_version <= parseFloat(this.browser.version) );
-		else
-			this.isSupported = false;
+		this.isSupported = angular.isDefined(browser.minVersion)?
+				(browser.minVersion <= parseFloat(this.browser.version) )
+				: false;
 
 	};
 
@@ -271,19 +306,19 @@ angular.module("sy-tools.browser",[])
 
 	return Device;
 }])
-.directive('deviceDetector', ["Device", "$log", "$window", "$sce", "$rootScope", function (Device, $log, $window, $sce, $rootScope) {
+.directive('deviceDetector', ['Device', '$log', '$window', '$sce', function (Device, $log, $window, $sce) {
 	return {
-		restrict: "E",
+		restrict: 'E',
 		replace : true,
 		template: '<div ng-show="!device.isSupported" class="alert alert-warning" role="alert" ng-bind-html="texte"></div>',
-		link: function (scope, element, attrs) {
+		link: function (scope, element) {
 			
 			scope.device = new Device();
 
 	    	$log.debug(scope.device);
 	    	
 	    	scope.content = JSON.stringify(scope.device);
-	    	scope.texte = $sce.trustAsHtml("The browser is not supported by this application.");
+	    	scope.texte = $sce.trustAsHtml('The browser is not supported by this application.');
 	    		    	
 			element.addClass('os-'+scope.device.os);
 			element.addClass('browser-'+scope.device.browser.name);
@@ -292,14 +327,15 @@ angular.module("sy-tools.browser",[])
 	};
 }]);
 
+'use strict';
 
 angular.module('sy-tools.feedback', [])
     
 .constant('FEEDBACK', {
-	unavailable: "The server is currently unavailable. Please, try again later.",
-	failure: "An error has occured. Please, contact support or try again later.",
+	unavailable: 'The server is currently unavailable. Please, try again later.',
+	failure: 'An error has occured. Please, contact support or try again later.',
     level : {
-        'default' : "default",
+        'default' : 'default',
         success : 'success',
         info : 'info',
         warning : 'warning',
@@ -308,7 +344,7 @@ angular.module('sy-tools.feedback', [])
 })
 
 .constant('HTTP_CODE', {
-	pattern_4XX: /^4[0-9]{2}$/
+	pattern4XX: /^4[0-9]{2}$/
 })
 
 .directive('syFeedback', ['$log', 'Feedback', function($log, Feedback) {
@@ -344,19 +380,20 @@ angular.module('sy-tools.feedback', [])
 	    return JSON.stringify(a1)===JSON.stringify(a2);
 	};
 	
-	var formatMessage = function(messages, level, closable) {
+	var formatMessage = function(messages, level, options) {
 		var data = {
             level: level || FEEDBACK.level.default,
-            closable : angular.isDefined(closable)? closable : true
+            closable : angular.isObject(options) && angular.isDefined(options.closable)? options.closable : true,
+            message : angular.isObject(options) && angular.isDefined(options.message)? options.message : FEEDBACK.failure
         };
 		
 		if ( !angular.isArray(messages) ) {
-			data.message = isEmpty(messages)? FEEDBACK.failure : messages;
+			data.message = isEmpty(messages)? data.message : messages;
 		}
 		else {
       	  	switch (messages.length) {
       	  		case 0:
-      	  			data.message = FEEDBACK.failure;
+      	  			data.message = data.message;
       	  			break;
       	  		case 1:
       	  			data.message = messages[0];
@@ -391,8 +428,8 @@ angular.module('sy-tools.feedback', [])
         this.alerts = new Array();
     }
     
-    Feedback.prototype.local = function (content, level, closable) {
-        var toAdd = formatMessage(content, level, closable);
+    Feedback.prototype.local = function (content, level, options) {
+        var toAdd = formatMessage(content, level, options);
         if ( hasDuplicates(this.alerts, toAdd) ) return;
         this.alerts.push( toAdd );
     };
@@ -420,7 +457,7 @@ angular.module('sy-tools.feedback', [])
         		  	}
         		}
         		break;
-        	case HTTP_CODE.pattern_4XX.test( error.status ):
+        	case HTTP_CODE.pattern4XX.test( error.status ):
         	  	arrayMessages = FEEDBACK.failure;
           		break;
         	case 503:
@@ -439,20 +476,20 @@ angular.module('sy-tools.feedback', [])
 
 }]);
 
+'use strict';
 
 angular.module('sy-tools.footer', [])
     
 .directive('footer', ['$log', '$window', '$timeout', function($log, $window, $timeout) {
     return {
         restrict: 'E',
-        link: function(scope, element, attrs, ctrl) {
+        link: function(scope, element) {
         	
-        	function applyHeight() {
+        	var applyHeight = function() {
         		var height = element[0].offsetHeight;
-            	
-            	element.css("margin-top", "-"+height+"px");
-            	angular.element("#page-wrapper > div:first-child").css("padding-bottom", height+"px");
-            }
+            	element.css('margin-top', '-'+height+'px');
+            	angular.element('#page-wrapper > div:first-child').css('padding-bottom', height+'px');
+            };
 
             angular.element($window).bind('resize', function() {
                 $timeout(function() {
@@ -484,15 +521,14 @@ angular.module('sy-tools.footer', [])
 
 	passStrengthModule.directive('syPasswordStrength', ['$log', '$rootScope', function($log, $rootScope) {
 		return {
-			template: '<progressbar value="value" type="{{type}}" title="Password strength">{{niveau}}</progressbar>'
-						+'<div>{{message}}</div>',
+			template: '<progressbar value="value" type="{{type}}" title="Password strength">{{niveau}}</progressbar><div>{{message}}</div>',
 			restrict: 'E',
-			replace: false,
+			//replace: false,
 			scope: {
-				pwd: '=syPassword',
-				value: '=syStrength'
+				pwd: '=password',
+				value: '=strength'
 			},
-			link: function(scope /*, elem, attrs*/ ) {
+			link: function(scope ) {
 				
 				var displayedMessage = "Weak";
 
@@ -542,7 +578,7 @@ angular.module('sy-tools.footer', [])
 						}
 //						$log.debug(rule.consecutif+' caractères consécutifs trouvés');
 
-						var repeatedChars = new Array();
+						var repeatedChars = [];
 						var repeatedMax = 0;
 						for ( i=0 ; i<pArray.length ; i++) {
 							if (angular.isUndefined( repeatedChars [ pArray[i] ] ))
@@ -609,11 +645,195 @@ angular.module('sy-tools.footer', [])
 
 (function () {
     'use strict';
+    
+    var railwayModule = angular.module('sy-tools.railway', []);
+    
+    railwayModule.run(["$templateCache", function($templateCache) {
+        $templateCache.put('sy-tools/template/railway.html', 
+            ['<div class="railway-row-track" >',
+            '<div class="railway-row-col">',
+                '<div class="railway-track" ng-if="railway.options.showTracks"><div ng-repeat="child in railway.children track by $index" ng-class="{\'active\':railway.current>=$index}">',
+                    '<div></div><div title={{labels[$index]}}>{{$index+1}}</div><div></div>',
+                    '<span ng-show="railway.options.showLabels" ng-bind="labels[$index]"></span>',
+                '</div></div>',
+            '</div> </div>',
+            '<div class="railway" ng-transclude></div>',
+            '<div class="text-center railway-btn-group" ng-show="railway.children.length>0">',
+                '<button class="btn btn-primary btn-railway" ng-disabled="!railway.hasPrevious()" ng-click="goBack()" >Previous</button>',
+                '<button class="btn btn-primary btn-railway" ng-disabled="!railway.hasNext()" ng-click="goNext()" >Next</button>',
+                '<button class="btn btn-success btn-railway" ng-show="railway.isLast()" ng-click="complete()" >Finish</button>',
+            '</div>'
+            ].join('')
+        );
+    }]);
+
+    railwayModule.constant('RAILWAY', {
+    	trimSteps: true,
+    	showLabels: true,
+    	showTracks: true
+    });
+
+    railwayModule.directive('railway', ['$log', 'Railway', 'RAILWAY', '$timeout', function($log, Railway, RAILWAY, $timeout) {
+        return {
+            restrict: 'E',
+            replace: false,
+            transclude: true,
+            require: '?ngModel',
+            templateUrl: 'sy-tools/template/railway.html',
+            scope: {
+            	railway :'=?ngModel',
+                complete: '&onComplete',
+                next: '&onNext',
+                previous: '&onPrevious'
+            },
+            link: function(scope, element, attrs, ctrl) {
+                var options = {
+                    trimSteps : attrs.railwayTrimSteps? attrs.railwayTrimSteps==="true" : RAILWAY.trimSteps,
+                    showLabels : attrs.railwayShowLabels? attrs.railwayShowLabels==="true" : RAILWAY.showLabels,
+                    showTracks : attrs.railwayShowTracks? attrs.railwayShowTracks==="true" : RAILWAY.showTracks
+                }
+            	scope.railway = new Railway(element, options);
+
+                scope.labels = new Array();
+
+                $timeout(function(){
+
+                   if (scope.railway.options.showTracks) {
+
+                        var nb = scope.railway.children.length;
+                        var steps = scope.railway.children;
+                        
+                        for (var i=0; i<steps.length; i++) {
+                            scope.labels.push($(steps[i]).attr('name'));
+                        }
+                        
+                        if (nb>1) {
+                            var main_blocs = element.find('.railway-track').children();
+                                                    
+                            if (scope.railway.options.trimSteps) {
+                                var larg_percent = 100/nb;
+                                main_blocs.css('width', larg_percent+'%').addClass('fitted');
+                            }
+                            else {
+                                var larg_percent = 100/(2*(nb-1));
+                                main_blocs.css('width', 2*larg_percent+'%');
+                                angular.element(main_blocs[0]).css('width', larg_percent+'%');
+                                angular.element(main_blocs[main_blocs.length-1]).css('width', larg_percent+'%');
+                            }
+                            
+                        }
+                        else 
+                            angular.element('.railway-track > div').css('width', '100%');
+                    }
+                });
+
+            },
+            controller: function ($scope) {
+                $scope.goNext = function(){
+                    $scope.next();
+                    $scope.railway.next();
+                };
+                $scope.goBack = function(){
+                    $scope.previous();
+                    $scope.railway.previous();
+                };
+
+                this.getRailway = function() {
+                    return $scope.railway;
+                }
+            }
+        };
+    }]);
+
+    /*railwayModule.directive('railwayStation', ['$log', 'Railway', 'RAILWAY', '$timeout', function($log, Railway, RAILWAY, $timeout) {
+        return {
+            restrict: 'E',
+            require: '^railway',
+            scope: {
+                complete: '&onComplete'
+            }
+        };
+    }]);*/
+    
+    
+    /**
+     * Object oriented declaration of the Step-by-step navigation object
+     */
+    railwayModule.factory('Railway', ['$log', function ($log) {
+    	
+    	/**
+    	 * Initialize the view: display the first "div" tag and hide the others
+    	 * @param element navigation wrapper
+    	 */
+    	var Railway = function(element, options) {
+    		this.children = element.children('.railway').children('railway-station');
+            this.element = element;
+            this.options = options;
+    		this.current = false;
+    		
+    		if ( this.children.length>0 ){
+    			this.current = 0;
+    			$(this.children[0]).css("display", "block");
+    			$log.debug(this.children);
+    			
+    			for (var i=1; i<this.children.length; i++) {
+    				$(this.children[i]).css("display", "none");
+    			}
+    		}
+        };
+        
+        /**
+         * Navigate to next step
+         */
+        Railway.prototype.next = function(){
+    		if ( this.current < this.children.length-1 ){
+    			$(this.children[this.current]).css("display", "none");
+    			$(this.children[++this.current]).css("display", "block");
+    		}
+    	};
+    	
+    	/**
+         * Navigate to previous step
+         */
+    	Railway.prototype.previous = function(){
+    		if ( this.current > 0 ) {
+    			$(this.children[this.current]).css("display", "none");
+    			$(this.children[--this.current]).css("display", "block");
+    		}
+    	};
+    	
+    	/**
+         * @returns true if a next step exists, false otherwise 
+         */
+    	Railway.prototype.hasNext = function(){
+    		return this.current < this.children.length-1;
+    	};
+    	
+    	/**
+         * @returns true if a previous step exists, false otherwise 
+         */
+    	Railway.prototype.hasPrevious = function(){
+    		return this.current > 0;
+    	};
+
+        /**
+         * @returns true if it is the last step, false otherwise 
+         */
+        Railway.prototype.isLast = function(){
+            return this.current == this.children.length-1;
+        };
+        
+        return Railway;
+    }]);
+    
+})();
+(function () {
+    'use strict';
 
     var validationModule = angular.module('sy-tools.validation', []);
 
     var INTEGER_REGEXP = /^\-?\d+$/;
-    var FLOAT_REGEXP = /^\-?\d+((\.|\,)\d+)?$/;
+    //var FLOAT_REGEXP = /^\-?\d+((\.|\,)\d+)?$/;
     var FLOAT_REGEXP_FR = /^\-?\d+(\,\d+)?$/;
     var FLOAT_REGEXP_ENG = /^\-?\d+(\.\d+)?$/;
     var EMAIL_REGEXP = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$/;
@@ -629,121 +849,124 @@ angular.module('sy-tools.footer', [])
     validationModule.factory('Validation', ['$log', '$filter', function($log, $filter) {
 
     	var isEmpty = function(val) {
-            return angular.isUndefined(val) || val===null || val==="";
+            return angular.isUndefined(val) || val===null || val==='';
         };
 
     	var check = function(field, rule){
     		var result = false;
+
+            var date, comp, d, m, y,dateStr;
     		
-    		function isValidDate(d) {
-			 	if ( Object.prototype.toString.call(d) !== "[object Date]" )
-			    return false;
-			  return !isNaN(d.getTime());
-			}
+    		var isValidDate = function(d) {
+                if ( Object.prototype.toString.call(d) !== '[object Date]' ) {
+                    return false;
+                }
+                return !isNaN(d.getTime());
+			};
     		
     		switch (rule.key) {
-    			case "isTrue" :
-    				result = (rule.value==true);
+    			case 'isTrue' :
+    				result = (rule.value===true);
     				break;
-    			case "integer" :
+    			case 'integer' :
     				result = isEmpty(field) || INTEGER_REGEXP.test(field);
     				break;
-    			case "nir" :
+    			case 'nir' :
     				result = NIR.test(field);
     				break;
-    			case "tel" :
+    			case 'tel' :
     				result = isEmpty(field) || TEL.test(field);
     				break;
-    			case "postcode" :
+    			case 'postcode' :
     				result = POST_CODE.test(field);
     				break;
-    			case "alphadashspace" :
+    			case 'alphadashspace' :
     				result = ALPHA_DASH_SPACE.test(field);
     				break;
-    			case "alphanumeric" :
+    			case 'alphanumeric' :
     				result = ALPHA_NUMERIC.test(field);
     				break;
-    			case "alphachars" :
+    			case 'alphachars' :
     				result = ALPHA_CHARS.test(field);
     				break;
-    			case "alpha" :
+    			case 'alpha' :
     				result = ALPHA.test(field);
     				break;
-    			case "floatfr" :
+    			case 'floatfr' :
     				result = FLOAT_REGEXP_FR.test(field);
     				break;
-    			case "floateng" :
+    			case 'floateng' :
     				result = FLOAT_REGEXP_ENG.test(field);
     				break;
-    			case "array": 
+    			case 'array': 
     				result = angular.isArray(field);
     				break;
-    			case "inarray": 
+    			case 'inarray': 
     				result = field!==undefined && rule.value.indexOf(field)>-1;
     				break;
-    			case "email" :
+    			case 'email' :
     				result = EMAIL_REGEXP.test(field);
     				break;
-    			case "date": 
+    			case 'date': 
     				// teste pour: jj/mm/aaaa
-    				var date = new Date();
+    				date = new Date();
     				if ( field instanceof Date ) {
     					date = field;
     				}
     				else if ( field!==undefined ) {
-	    				var comp = field.split('/');
-	    				var d = parseInt(comp[0], 10);
-	    				var m = parseInt(comp[1], 10);
-	    				var y = parseInt(comp[2], 10);
+	    				comp = field.split('/');
+	    				d = parseInt(comp[0], 10);
+	    				m = parseInt(comp[1], 10);
+	    				y = parseInt(comp[2], 10);
 	    				date = new Date(y,m-1,d);
     				}
-    				var date_str = $filter('date')(date, 'dd/MM/yyyy');
+    				dateStr = $filter('date')(date, 'dd/MM/yyyy');
     			
-    				result = field!==undefined && isValidDate( date ) && (date_str==field);
+    				result = field!==undefined && isValidDate( date ) && (dateStr===field);
     				break;
-    			case "datebefore": 
+    			case 'datebefore': 
     				// teste pour: jj/mm/aaaa
-    				var date = new Date();
+    				date = new Date();
     				if ( field!==undefined ) {
-	    				var comp = field.split('/');
-	    				var d = parseInt(comp[0], 10);
-	    				var m = parseInt(comp[1], 10);
-	    				var y = parseInt(comp[2], 10);
+	    				comp = field.split('/');
+	    				d = parseInt(comp[0], 10);
+	    				m = parseInt(comp[1], 10);
+	    				y = parseInt(comp[2], 10);
 	    				date = new Date(y,m-1,d);
     				}
     				result = date < rule.value;
     				break;
-    			case "boolean": 
-    				result = (field!==undefined && typeof field=='boolean');
+    			case 'boolean': 
+    				result = (field!==undefined && typeof field==='boolean');
     				break;
-    			case "min": 
+    			case 'min': 
     				result = ( parseFloat(field)>=rule.value );
     				break;
-    			case "max": 
+    			case 'max': 
     				result = ( parseFloat(field)<=rule.value );
     				break;
-    			case "equal": 
-    				result = (field==rule.value);
+    			case 'equal': 
+    				result = (field===rule.value);
     				break;
-    			case "length": 
-    				result = (field!==undefined && String(field).length==rule.value);
+    			case 'length': 
+    				result = (field!==undefined && String(field).length===rule.value);
     				break;
-    			case "minlength": 
+    			case 'minlength': 
     				result = (field!==undefined && String(field).length>=rule.value);
     				break;
-    			case "maxlength": 
-    				result = (field==undefined || String(field).length<=rule.value);
+    			case 'maxlength': 
+    				result = (field===undefined || String(field).length<=rule.value);
     				break;
-    			case "required": 
-    				result = (field!==undefined && field!=="" && field!==null) || (angular.isArray(field) && field.length>0) || ( field instanceof Date ) || (typeof field == 'boolean');
+    			case 'required': 
+    				result = (field!==undefined && field!=='' && field!==null) || (angular.isArray(field) && field.length>0) || ( field instanceof Date ) || (typeof field === 'boolean');
     				break;
     		}
-    		$log.debug( "check for "+field+" as "+rule.key+" is "+result);
+    		$log.debug( 'check for '+field+' as '+rule.key+' is '+result);
     		return result;
     	};
     	
     	var allErrors = function (validation) {
-    		var messages = new Array();
+    		var messages = [];
     		for (var field in validation) {
     			if (validation.hasOwnProperty(field)) {
     			    var val = validation[field];
@@ -755,20 +978,22 @@ angular.module('sy-tools.footer', [])
 
         var Validation = function(){
             this.done = false;
-            this.fields = new Array();
+            this.fields = [];
         };
 
         Validation.prototype.add = function( label, field, rules, skip) {
             var result = true;
-            var messages = new Array();
+            var messages = [];
             for( var i=0; i<rules.length; i++) {
                 var temp = check(field, rules[i]);
                 result = result && temp;
                 if (!temp) {
-                    if ( rules[i].message!==undefined && rules[i].message!=="" )
+                    if ( rules[i].message!==undefined && rules[i].message!=='' ) {
                         messages.push(rules[i].message);
-                    if (skip!==undefined && skip) 
+                    }
+                    if (skip!==undefined && skip) {
                         break;
+                    }
                 }
             }
             this.fields[label] = { passes : result, messages : messages };
@@ -786,13 +1011,13 @@ angular.module('sy-tools.footer', [])
                     var val = this.fields[field];
                     valid = (valid && val.passes);
                   }
-                else valid = false;
+                else {valid = false;}
             }
             return valid;
         };
 
         Validation.prototype.errorsAsString = function() {
-            return allErrors(this.fields).join(" ");
+            return allErrors(this.fields).join(' ');
         };
 
         Validation.prototype.errorsAsArray = function() {

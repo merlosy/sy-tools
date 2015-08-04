@@ -2,6 +2,32 @@
 
 angular.module('sy-tools.birthdate', [])
 
+.run(["$templateCache", function($templateCache) {
+    $templateCache.put('sy-tools/template/birthdate.html', 
+        ['<div class="row" ng-cloak>',
+            '<div class="col-sm-4 col-xs-4" style="width:30%">',
+                '<input type="text" name="day" class="form-control" ng-model="day" maxlength=2 ',
+                    'id="birthdate-jour" ng-change="setDateFromFields()" ',
+                    'title="{{lang.title_day}}" placeholder="{{lang.placeholder_day}}" />',
+           '</div>',
+            '<div class="col-sm-4 col-xs-4" style="width:30%">',
+                '<input type="text" name="month" class="form-control" ng-model="month" maxlength=2',
+                    'id="birthdate-mois" ng-change="setDateFromFields()" ',
+                    'title="{{lang.title_month}}" placeholder="{{lang.placeholder_month}}" />',
+            '</div>',
+            '<div class="col-sm-4 col-xs-4" style="width:40%">',
+                '<div class="form-group has-feedback" style="margin-bottom:0">',
+                    '<input type="text" name="year" class="form-control" ng-model="year" maxlength=4 ',
+                        'id="birthdate-annee" ng-change="setDateFromFields()" ',
+                        'title="{{lang.title_year}}" placeholder="{{lang.placeholder_year}}" />',
+                    '<span class="glyphicon form-control-feedback glyphicon-asterisk"></span>',
+                '</div>',
+            '</div>',
+        '</div>'
+        ].join('')
+    );
+}])
+
 .constant('BIRTHDATE', {
     lang: {
         placeholder_day: "DD",
@@ -25,7 +51,7 @@ angular.module('sy-tools.birthdate', [])
         require: 'ngModel',
         replace: true,
         transclude: true,
-        templateUrl : "app/birthdate.template.html",
+        templateUrl : "sy-tools/template/birthdate.html",
 		scope : {
 			dateValue : '=ngModel'
 		},
