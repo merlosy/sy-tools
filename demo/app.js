@@ -8,8 +8,7 @@
       'ui.router',
       'sy-tools',
       'sy-tools.demo-feedback',   
-      'sy-tools.demo-birthdate',   
-      'sy-tools.demo-password-strength',   
+      'sy-tools.demo-birthdate',  
       'sy-tools.demo-railway',   
       'sy-tools.demo-device'    
       ]);
@@ -37,11 +36,6 @@
       $stateProvider.state('device', {
          url: "/device",
          templateUrl: 'demo/device.html'
-      });
-
-      $stateProvider.state('password', {
-         url: "/password",
-         templateUrl: 'demo/password.html'
       });
 
       $stateProvider.state('railway', {

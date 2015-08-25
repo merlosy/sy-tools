@@ -7,8 +7,7 @@ angular.module('sy-tools', [
     'sy-tools.feedback',
     //'sy-tools.footer',
     'sy-tools.validation',
-    'sy-tools.railway',
-    //'sy-tools.password-strength'
+    'sy-tools.railway'
 ]);
 
 'use strict';
@@ -504,327 +503,203 @@ angular.module('sy-tools.footer', [])
 }]);
     
 (function () {
-	'use strict';
-
-	/**
-	 * @ngdoc directive
-	 * @name ngPasswordStrengthApp.directive:ngPasswordStrength
-	 * @description version simplifiée de la jauge ci-dessous, dépendance avec underscore.js enlevée
-	 * @see https://raw.githubusercontent.com/subarroca/ng-password-strength/master/app/scripts/directives/ng-password-strength.js
-	 * # ngPasswordStrength
-	 */
-	var passStrengthModule = angular.module('sy-tools.password-strength', [
-	     'ui.bootstrap.progressbar',
-	     'template/progressbar/progress.html',
-	     'template/progressbar/progressbar.html'
-	]);
-
-	passStrengthModule.directive('syPasswordStrength', ['$log', '$rootScope', function($log, $rootScope) {
-		return {
-			template: '<progressbar value="value" type="{{type}}" title="Password strength">{{niveau}}</progressbar><div>{{message}}</div>',
-			restrict: 'E',
-			//replace: false,
-			scope: {
-				pwd: '=password',
-				value: '=strength'
-			},
-			link: function(scope ) {
-				
-				var displayedMessage = "Weak";
-
-				var mesureStrength = function(p) {
-					var counts = {
-							all : {},
-							consec : {}
-					},
-					matches = {},
-					tmp,
-					strength = 0,
-					i,
-					pArray,
-					consec,
-					previous = null,
-					rule = {
-						variete : 0,
-						consecutif : 0,
-						caracteresDifferents : 0
-					};
-
-					if (p) {
-						pArray = p.split("");
-
-						// variete du mot de passe
-						matches.lower = p.match(/[a-z]/g);
-						matches.upper = p.match(/[A-Z]/g);
-						matches.numbers = p.match(/\d/g);
-						matches.symbols = p.match(/[^a-zA-Z0-9_]/g);
-
-						counts.all.lower = matches.lower ? matches.lower.length : 0;
-						counts.all.upper = matches.upper ? matches.upper.length : 0;
-						counts.all.numbers = matches.numbers ? matches.numbers.length : 0;
-						counts.all.symbols = matches.symbols ? matches.symbols.length : 0;
-
-						angular.forEach(counts.all, function(value, key) {
-							if (value>0)
-								this.variete ++;
-						}, rule);
-//						$log.debug(rule.variete+' correspondance parmi (au moins 1 MAJ, au moins 1 MIN, au moins 1 symbole, au moins 1 nombre)');
-
-						// compte nombre caracteres consecutifs
-						for ( i=0 ; i<pArray.length ; i++) {
-							consec = (previous == pArray[i])? consec+1 : 1;
-							previous = pArray[i];
-							rule.consecutif = Math.max(consec, rule.consecutif);
-						}
-//						$log.debug(rule.consecutif+' caractères consécutifs trouvés');
-
-						var repeatedChars = [];
-						var repeatedMax = 0;
-						for ( i=0 ; i<pArray.length ; i++) {
-							if (angular.isUndefined( repeatedChars [ pArray[i] ] ))
-								repeatedChars [ pArray[i] ] = 0;
-							// nombre d'occurence de chaque caractère
-							repeatedChars [ pArray[i] ] ++;
-
-							repeatedMax = Math.max(repeatedChars [ pArray[i] ], repeatedMax);
-						}
-						rule.caracteresDifferents = Object.keys(repeatedChars).length;
-						//             	$log.debug(repeatedMax+' occurences du caractère le plus présent');
-//						$log.debug(rule.caracteresDifferents+' caractères différents');
-
-
-					}
-
-
-					return Math.max(0, Math.min(100, Math.round(strength)));;
-				},
-
-
-				getType = function(s) {
-					switch (Math.round(s / 33)) {
-					case 0:
-					case 1:
-						return 'danger';
-					case 2:
-						return 'warning';
-					case 3:
-						return 'success';
-					}
-				},
-
-				getMessage = function(s, message) {
-					return s==0? $rootScope.lang.jauge.message.taille_nulle : message;
-				},
-
-				getLevel = function(s) {
-					switch (Math.round(s / 33)) {
-					case 0: return $rootScope.lang.jauge.niveau.faible;
-					case 1:
-						return $rootScope.lang.jauge.niveau.faible;
-					case 2:
-						return $rootScope.lang.jauge.niveau.moyen;
-					case 3:
-						return $rootScope.lang.jauge.niveau.fort;
-					}
-				};
-
-				scope.$watch('pwd', function(newValue, oldValue) {
-					if (newValue !== oldValue) {
-						scope.value = mesureStrength(scope.pwd);
-						scope.type = getType(scope.value);
-						scope.level = getLevel(scope.value);
-						scope.message = getMessage(scope.value, displayedMessage);
-					}
-				});
-
-			}
-		};
-	}]);
-
-})();
-
-(function () {
     'use strict';
     
-    var railwayModule = angular.module('sy-tools.railway', []);
-    
-    railwayModule.run(["$templateCache", function($templateCache) {
-        $templateCache.put('sy-tools/template/railway.html', 
-            ['<div class="railway-row-track" >',
-            '<div class="railway-row-col">',
-                '<div class="railway-track" ng-if="railway.options.showTracks"><div ng-repeat="child in railway.children track by $index" ng-class="{\'active\':railway.current>=$index}">',
-                    '<div></div><div title={{labels[$index]}}>{{$index+1}}</div><div></div>',
-                    '<span ng-show="railway.options.showLabels" ng-bind="labels[$index]"></span>',
-                '</div></div>',
-            '</div> </div>',
-            '<div class="railway" ng-transclude></div>',
-            '<div class="text-center railway-btn-group" ng-show="railway.children.length>0">',
-                '<button class="btn btn-primary btn-railway" ng-disabled="!railway.hasPrevious()" ng-click="goBack()" >Previous</button>',
-                '<button class="btn btn-primary btn-railway" ng-disabled="!railway.hasNext()" ng-click="goNext()" >Next</button>',
-                '<button class="btn btn-success btn-railway" ng-show="railway.isLast()" ng-click="complete()" >Finish</button>',
-            '</div>'
-            ].join('')
-        );
-    }]);
+    angular.module('sy-tools.railway', []);
 
-    railwayModule.constant('RAILWAY', {
+    angular.module('sy-tools.railway').constant('RAILWAY', {
     	trimSteps: true,
     	showLabels: true,
-    	showTracks: true
+        showTracks: true,
+    	showButtons: true
     });
 
-    railwayModule.directive('railway', ['$log', 'Railway', 'RAILWAY', '$timeout', function($log, Railway, RAILWAY, $timeout) {
+    /**
+     * @name RailwayDirective
+     * @desc <railway> directive
+     */
+    function RailwayDirective( $timeout, Railway, RAILWAY ) {
+
+        /**
+         * @name RailwayController
+         * @desc Linker for railway directive
+         * @type {Function}
+         */
+        function RailwayController() {
+            this.goNext = function(){
+                this.next();
+                this.railway.next();
+            };
+            this.goBack = function(){
+                this.previous();
+                this.railway.previous();
+            };
+        }
+
+        /**
+         * @name RailwayLink
+         * @desc Linker for railway directive
+         * @type {Function}
+         */
+        function RailwayLink(scope, element) {
+            var ctrl = scope.ctrl;
+
+            var options = {
+                trimSteps : ctrl.railwayTrimSteps? ctrl.railwayTrimSteps==='true' : RAILWAY.trimSteps,
+                showLabels : ctrl.railwayShowLabels? ctrl.railwayShowLabels==='true' : RAILWAY.showLabels,
+                showButtons : ctrl.railwayShowButtons? ctrl.railwayShowButtons==='true' : RAILWAY.showButtons,
+                showTracks : ctrl.railwayShowTracks? ctrl.railwayShowTracks==='true' : RAILWAY.showTracks
+            };
+            ctrl.railway = new Railway(element, options);
+
+            ctrl.labels = [];
+
+            $timeout(function(){
+
+               if (ctrl.railway.options.showTracks) {
+
+                    var nb = ctrl.railway.children.length;
+                    var steps = ctrl.railway.children;
+                    var largPercent = 100;
+                    
+                    for (var i=0; i<steps.length; i++) {
+                        ctrl.labels.push($(steps[i]).attr('name'));
+                    }
+                    
+                    if (nb>1) {
+                        var mainBlocs = element.find('.railway-track').children();
+                                                
+                        if (ctrl.railway.options.trimSteps) {
+                            largPercent = 100/(nb-1);
+                            mainBlocs.css('width', largPercent+'%').addClass('fitted');
+                            angular.element(mainBlocs[0]).css('width', largPercent/2+'%');
+                            angular.element(mainBlocs[mainBlocs.length-1]).css('width', largPercent/2+'%');
+                        }
+                        else {
+                            largPercent = 100/nb;
+                            mainBlocs.css('width', largPercent+'%');
+                        }
+                        
+                    }
+                    else {
+                        angular.element('.railway-track > div').css('width', largPercent+'%');
+                    }
+                }
+            });
+
+        }
+
         return {
             restrict: 'E',
             replace: false,
             transclude: true,
             require: '?ngModel',
-            templateUrl: 'sy-tools/template/railway.html',
+            template: ['<div class="railway-row-track" >',
+                '<div class="railway-row-col">',
+                    '<div class="railway-track" ng-if="ctrl.railway.options.showTracks"><div ng-repeat="child in ctrl.railway.children track by $index" ng-class="{\'active\':ctrl.railway.current>=$index}">',
+                        '<div></div><div title={{ctrl.labels[$index]}}>{{$index+1}}</div><div></div>',
+                        '<span ng-show="ctrl.railway.options.showLabels" ng-bind="ctrl.labels[$index]"></span>',
+                    '</div></div>',
+                '</div> </div>',
+                '<div class="railway" ng-transclude></div>',
+                '<div class="text-center railway-btn-group" ng-show="ctrl.railway.children.length>0 && ctrl.railway.options.showButtons">',
+                    '<button class="btn btn-primary btn-railway" ng-disabled="!ctrl.railway.hasPrevious()" ng-click="ctrl.goBack()" >Previous</button>',
+                    '<button class="btn btn-primary btn-railway" ng-disabled="!ctrl.railway.hasNext()" ng-click="ctrl.goNext()" >Next</button>',
+                    '<button class="btn btn-success btn-railway" ng-show="ctrl.railway.isLast()" ng-click="ctrl.complete()" >Finish</button>',
+                '</div>'
+                ].join(''),
+            controllerAs: 'ctrl',
+            bindToController: true,
             scope: {
-            	railway :'=?ngModel',
+                railway :'=?ngModel',
                 complete: '&onComplete',
                 next: '&onNext',
-                previous: '&onPrevious'
+                previous: '&onPrevious',
+
+                railwayTrimSteps : '@?',
+                railwayShowLabels : '@?',
+                railwayShowButtons : '@?',
+                railwayShowTracks : '@?'
             },
-            link: function(scope, element, attrs, ctrl) {
-                var options = {
-                    trimSteps : attrs.railwayTrimSteps? attrs.railwayTrimSteps==="true" : RAILWAY.trimSteps,
-                    showLabels : attrs.railwayShowLabels? attrs.railwayShowLabels==="true" : RAILWAY.showLabels,
-                    showTracks : attrs.railwayShowTracks? attrs.railwayShowTracks==="true" : RAILWAY.showTracks
-                }
-            	scope.railway = new Railway(element, options);
-
-                scope.labels = new Array();
-
-                $timeout(function(){
-
-                   if (scope.railway.options.showTracks) {
-
-                        var nb = scope.railway.children.length;
-                        var steps = scope.railway.children;
-                        
-                        for (var i=0; i<steps.length; i++) {
-                            scope.labels.push($(steps[i]).attr('name'));
-                        }
-                        
-                        if (nb>1) {
-                            var main_blocs = element.find('.railway-track').children();
-                                                    
-                            if (scope.railway.options.trimSteps) {
-                                var larg_percent = 100/nb;
-                                main_blocs.css('width', larg_percent+'%').addClass('fitted');
-                            }
-                            else {
-                                var larg_percent = 100/(2*(nb-1));
-                                main_blocs.css('width', 2*larg_percent+'%');
-                                angular.element(main_blocs[0]).css('width', larg_percent+'%');
-                                angular.element(main_blocs[main_blocs.length-1]).css('width', larg_percent+'%');
-                            }
-                            
-                        }
-                        else 
-                            angular.element('.railway-track > div').css('width', '100%');
-                    }
-                });
-
-            },
-            controller: function ($scope) {
-                $scope.goNext = function(){
-                    $scope.next();
-                    $scope.railway.next();
-                };
-                $scope.goBack = function(){
-                    $scope.previous();
-                    $scope.railway.previous();
-                };
-
-                this.getRailway = function() {
-                    return $scope.railway;
-                }
-            }
+            link: RailwayLink,
+            controller: RailwayController
         };
-    }]);
+    }
 
-    /*railwayModule.directive('railwayStation', ['$log', 'Railway', 'RAILWAY', '$timeout', function($log, Railway, RAILWAY, $timeout) {
-        return {
-            restrict: 'E',
-            require: '^railway',
-            scope: {
-                complete: '&onComplete'
-            }
-        };
-    }]);*/
+    angular.module('sy-tools.railway').directive('railway', ['$timeout', 'Railway', 'RAILWAY', RailwayDirective]);
     
-    
-    /**
-     * Object oriented declaration of the Step-by-step navigation object
-     */
-    railwayModule.factory('Railway', ['$log', function ($log) {
-    	
-    	/**
-    	 * Initialize the view: display the first "div" tag and hide the others
-    	 * @param element navigation wrapper
-    	 */
-    	var Railway = function(element, options) {
-    		this.children = element.children('.railway').children('railway-station');
+
+    function RailwayFactory() {
+        
+        /**
+         * Initialize the view: display the first "div" tag and hide the others
+         * @param {jqLite} element navigation wrapper
+         * @param {object} options configuration of instance
+         */
+        var Railway = function(element, options) {
+            this.children = element.children('.railway').children('railway-station');
             this.element = element;
             this.options = options;
-    		this.current = false;
-    		
-    		if ( this.children.length>0 ){
-    			this.current = 0;
-    			$(this.children[0]).css("display", "block");
-    			$log.debug(this.children);
-    			
-    			for (var i=1; i<this.children.length; i++) {
-    				$(this.children[i]).css("display", "none");
-    			}
-    		}
+            this.current = false;
+            
+            if ( this.children.length>0 ){
+                this.current = 0;
+                $(this.children[0]).css('display', 'block');
+                
+                for (var i=1; i<this.children.length; i++) {
+                    $(this.children[i]).css('display', 'none');
+                }
+            }
         };
         
         /**
          * Navigate to next step
          */
         Railway.prototype.next = function(){
-    		if ( this.current < this.children.length-1 ){
-    			$(this.children[this.current]).css("display", "none");
-    			$(this.children[++this.current]).css("display", "block");
-    		}
-    	};
-    	
-    	/**
+            if ( this.current < this.children.length-1 ){
+                $(this.children[this.current]).css('display', 'none');
+                $(this.children[++this.current]).css('display', 'block');
+            }
+        };
+        
+        /**
          * Navigate to previous step
          */
-    	Railway.prototype.previous = function(){
-    		if ( this.current > 0 ) {
-    			$(this.children[this.current]).css("display", "none");
-    			$(this.children[--this.current]).css("display", "block");
-    		}
-    	};
-    	
-    	/**
+        Railway.prototype.previous = function(){
+            if ( this.current > 0 ) {
+                $(this.children[this.current]).css('display', 'none');
+                $(this.children[--this.current]).css('display', 'block');
+            }
+        };
+        
+        /**
          * @returns true if a next step exists, false otherwise 
          */
-    	Railway.prototype.hasNext = function(){
-    		return this.current < this.children.length-1;
-    	};
-    	
-    	/**
+        Railway.prototype.hasNext = function(){
+            return this.current < this.children.length-1;
+        };
+        
+        /**
          * @returns true if a previous step exists, false otherwise 
          */
-    	Railway.prototype.hasPrevious = function(){
-    		return this.current > 0;
-    	};
+        Railway.prototype.hasPrevious = function(){
+            return this.current > 0;
+        };
 
         /**
          * @returns true if it is the last step, false otherwise 
          */
         Railway.prototype.isLast = function(){
-            return this.current == this.children.length-1;
+            return this.current === this.children.length-1;
         };
         
         return Railway;
-    }]);
+    }
+
+    /**
+     * Object oriented declaration of the Step-by-step navigation object
+     */
+    angular.module('sy-tools.railway').factory('Railway', [RailwayFactory]);
     
 })();
 (function () {

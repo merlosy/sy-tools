@@ -7,6 +7,5 @@ angular.module('sy-tools', [
     'sy-tools.feedback',
     //'sy-tools.footer',
     'sy-tools.validation',
-    'sy-tools.railway',
-    //'sy-tools.password-strength'
+    'sy-tools.railway'
 ]);
