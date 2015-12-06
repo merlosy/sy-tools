@@ -120,10 +120,7 @@
             link: RailwayLink,
             controller: RailwayController
         };
-    }
-
-    angular.module('sy-tools.railway').directive('railway', ['$timeout', 'Railway', 'RAILWAY', RailwayDirective]);
-    
+    }    
 
     function RailwayFactory() {
         
@@ -195,6 +192,9 @@
     /**
      * Object oriented declaration of the Step-by-step navigation object
      */
-    angular.module('sy-tools.railway').factory('Railway', [RailwayFactory]);
+    angular.module('sy-tools.railway')
+        .factory('Railway', [RailwayFactory])
+        .directive('railway', ['$timeout', 'Railway', 'RAILWAY', RailwayDirective]);
+
     
 })();
