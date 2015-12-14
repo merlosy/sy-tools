@@ -18,21 +18,22 @@ angular.module('sy-tools.feedback', [])
 	pattern4XX: /^4[0-9]{2}$/
 })
 
-.directive('syFeedback', ['$log', 'Feedback', function($log, Feedback) {
+.directive('syFeedback', [function() {
     return {
         restrict: 'E',
         replace: true,
-        template : '<div class="alert alert-{{alert.level}} alert-dismissible" role="alert" ng-repeat="alert in feedback.alerts">'
-	           +' 	<button ng-show="alert.closable" type="button" class="close" title="{{lang.actions.fermer.titre}}" data-dismiss="alert" ng-click="closeAlert($index)"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>'
-	           +' 		{{alert.message}}'
-	           +' 		<ul ng-show="alert.array">'
-	           +'  			<li ng-repeat="message in alert.array track by $index" ng-show="message.length>0">{{message}}</li>'
-	           +' 		</ul>'
-	           +' 	</div>',
+        template : ['<div class="alert alert-{{alert.level}} alert-dismissible" role="alert" ng-repeat="alert in feedback.alerts">',
+	           ' 	<button ng-show="alert.closable" type="button" class="close" title="{{lang.actions.fermer.titre}}" data-dismiss="alert" ng-click="closeAlert($index)"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>',
+	           ' 		{{alert.message}}',
+	           ' 		<ul ng-show="alert.array">',
+	           '  			<li ng-repeat="message in alert.array track by $index" ng-show="message.length>0">{{message}}</li>',
+	           ' 		</ul>',
+	           ' 	</div>'
+             ].join(''),
 		scope : {
 			feedback : '=model'
 		},
-        link: function(scope, element, attrs, ctrl) {
+        link: function(scope) {
 
 			scope.closeAlert = function(index) {
 	    	    scope.feedback.alerts.splice(index, 1);
@@ -44,7 +45,7 @@ angular.module('sy-tools.feedback', [])
 .factory('Feedback', [ '$rootScope', '$timeout', '$log', 'HTTP_CODE', 'FEEDBACK',
                             function ($rootScope, $timeout, $log, HTTP_CODE, FEEDBACK) {
 	var isEmpty = function(val) {
-        return angular.isUndefined(val) || val===null || val==="";
+        return angular.isUndefined(val) || val===null || val==='';
     };
 
 	var arraysEqual =  function(a1,a2) {
@@ -81,12 +82,8 @@ angular.module('sy-tools.feedback', [])
 		var duplicated = false;
 		
 		for (var i in alerts){
-			if ( (angular.isDefined(contenu.message) 
-                    && alerts[i].message===contenu.message
-                    && alerts[i].level===contenu.level) 
-  				  || (angular.isArray(contenu.array) 
-                        && arraysEqual(alerts[i].array, contenu.array) 
-                        && alerts[i].level===contenu.level)	 
+			if ( (angular.isDefined(contenu.message) && alerts[i].message===contenu.message && alerts[i].level===contenu.level) 
+  				  || (angular.isArray(contenu.array) && arraysEqual(alerts[i].array, contenu.array) && alerts[i].level===contenu.level)	 
   				){
   			  	$log.debug('Message duplicated');
   			  	duplicated = true;
@@ -96,12 +93,12 @@ angular.module('sy-tools.feedback', [])
 	};
 
     var Feedback = function() {
-        this.alerts = new Array();
-    }
+        this.alerts = [];
+    };
     
     Feedback.prototype.local = function (content, level, options) {
         var toAdd = formatMessage(content, level, options);
-        if ( hasDuplicates(this.alerts, toAdd) ) return;
+        if ( hasDuplicates(this.alerts, toAdd) ) {return;}
         this.alerts.push( toAdd );
     };
 
@@ -111,7 +108,7 @@ angular.module('sy-tools.feedback', [])
 
     Feedback.prototype.error = function (validation, error) {
         $log.debug(error);
-        var arrayMessages = new Array();
+        var arrayMessages = [];
 
         switch(error.status) {
         	case 412:
@@ -139,7 +136,7 @@ angular.module('sy-tools.feedback', [])
         }
 
         var toAdd = formatMessage(arrayMessages, FEEDBACK.level.danger);
-        if ( hasDuplicates(this.alerts, toAdd) ) return;
+        if ( hasDuplicates(this.alerts, toAdd) ) {return;}
         this.alerts.push( toAdd );
     };
       

@@ -89,3 +89,111 @@ railway,
 .railway-track > div.fitted:last-child span {
     text-align:right;
 }
+
+/************************** 
+ *          RAILWAY
+ **************************/
+
+.time-flow {
+    display: table;
+    width: 100%;
+}
+
+.time-flow > div {
+    display: table-cell;
+}
+
+.time-flow > .time-line {
+    width: 80px;
+    min-height: 1px;
+    position: relative;
+}
+.time-flow > .time-line:before {
+    content: " ";
+    position: absolute;
+    display: inline-block;
+    height: 100%;
+    width: 1px;
+    border-left: 2px solid #aac;
+    top: 0;
+    left: 50%;
+}
+.time-flow > .time-line:after {
+    content: " ";
+    position: absolute;
+    display: inline-block;
+    height: 14px;
+    width: 14px;
+    border-radius: 7px;
+    top: calc(50% - 7px);
+    left: calc(50% - 6px);
+    background-color: #aac;
+    border: 2px solid #fff;
+}
+/* custom types */
+.time-flow.as-first-event > .time-line:before {
+    height: 50%;
+    top: 50%;
+}
+.time-flow.as-last-event > .time-line:before {
+    height: 50%;
+}
+.time-flow.nest-event > .time-line:after,
+.time-flow.shadow-event > .time-line:after {
+    content: none;
+}
+.time-flow.as-firstchild-event > .time-line:before {
+    height: 50%;
+    width: 100%;
+    top: 50%;
+    left: calc(-50% + 2px);
+    border-top: 2px solid #aac;
+    border-right: 2px solid #aac;
+    border-left: none;
+}
+.time-flow.as-lastchild-event > .time-line:before {
+    height: 50%;
+    width: 100%;
+    top: 0;
+    left: calc(-50% + 2px);
+    border-right: 2px solid #aac;
+    border-left: none;
+    border-bottom: 2px solid #aac;
+}
+
+.time-flow > .time-event {
+    width: calc(100% - 80px);
+    padding: 15px 15px 15px 0;
+}
+
+.time-flow > .time-event > .time-event-body {
+    background-color: #fff;
+    padding: 15px;
+    width: 100%;
+    position: relative;
+}
+.time-flow.nest-event > .time-event > .time-event-body {
+    padding: 15px 0;
+}
+
+.time-flow > .time-event > .time-event-body:before {
+    content: " ";
+    position: absolute;
+    display: inline-block;
+    left: -14px;
+    width: 1px;
+    height: 1px;
+    top: calc(50% - 8px);
+    border-right: 14px solid #fff;
+    border-top: 8px solid transparent;
+    border-bottom: 8px solid transparent;
+}
+.time-flow.nest-event > .time-event > .time-event-body,
+.time-flow.shadow-event > .time-event > .time-event-body {
+    background-color: transparent;
+    text-align: center;
+}
+.time-flow.nest-event > .time-event > .time-event-body:before,
+.time-flow.shadow-event > .time-event > .time-event-body:before {
+    content: none;
+}

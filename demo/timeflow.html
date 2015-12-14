@@ -1,0 +1,21 @@
+<div ng-controller="TimeflowController"> 
+	
+	<div class="testtimeflow">
+
+		<time-flow flow-type="asFirst">It starts here!</time-flow>
+		<time-flow flow-type="shadow">This is awesome</time-flow>
+		<time-flow>I tricked it</time-flow>
+		<time-flow>So cooool</time-flow>
+		<time-flow flow-type="nest">
+			<time-flow flow-type="asFirstChild">So cooool branch</time-flow>
+			<time-flow>So cooool branch</time-flow>
+			<time-flow flow-type="nest">
+				<time-flow flow-type="asFirstChild">So cooool branch</time-flow>
+				<time-flow flow-type="asLastChild">So cooool branch</time-flow>
+			</time-flow>
+			<time-flow flow-type="asLastChild">So cooool branch</time-flow>
+		</time-flow>
+		<time-flow flow-type="asLast">Bouyaa!</time-flow>
+
+	</div>
+</div>

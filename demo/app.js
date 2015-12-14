@@ -10,6 +10,7 @@
       'sy-tools.demo-feedback',   
       'sy-tools.demo-birthdate',  
       'sy-tools.demo-railway',   
+      'sy-tools.demo-timeflow',   
       'sy-tools.demo-device'    
       ]);
 
@@ -41,6 +42,11 @@
       $stateProvider.state('railway', {
          url: "/railway",
          templateUrl: 'demo/railway.html'
+      });
+
+      $stateProvider.state('timeflow', {
+         url: "/timeflow",
+         templateUrl: 'demo/timeflow.html'
       });
 
       $urlRouterProvider.otherwise('/');
